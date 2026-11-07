@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>North Campus Commons</title>
+  <meta name="description" content="Interactive 3D concept for affordable, sustainable, community-centered workforce housing for Claremont Colleges employees — Sparkathon 2026." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2324553f'/%3E%3Cpath d='M6 22 L16 12 L26 22 Z' fill='%23e8c79a'/%3E%3Ccircle cx='16' cy='24' r='2' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+</head>
+<body>
+  <div id="viewport"></div>
+  <div id="pins"></div>
+  <div id="tooltip" class="hidden"></div>
+
+  <div id="loader">
+    <div class="loader-card">
+      <div class="spinner"></div>
+      <div class="loader-title">North Campus Commons</div>
+      <div id="loader-text">Loading…</div>
+    </div>
+  </div>
+
+  <header class="brand panel">
+    <div class="eyebrow">Sparkathon 2026 · Claremont Colleges Workforce Housing</div>
+    <h1>North Campus Commons</h1>
+    <p class="tagline">Designed around people, not cars.</p>
+    <p class="meta">Concept for the 31.5-acre North Campus golf course parcel on Indian Hill Blvd</p>
+  </header>
+
+  <nav class="controls panel" aria-label="Model controls">
+    <button id="panel-toggle" class="collapse" title="Collapse panel">☰</button>
+    <div class="controls-body">
+      <div class="section-label">Explore</div>
+      <button data-view="overview" class="nav active"><i class="ic">◎</i>Overview</button>
+      <button data-view="park" class="nav"><i class="ic" style="--c:#3d8b4f">●</i>Community Park</button>
+      <button data-view="courtyards" class="nav"><i class="ic" style="--c:#6aa84f">●</i>Residential Courtyards</button>
+      <button data-view="solar" class="nav"><i class="ic" style="--c:#2f6fd1">●</i>Solar Parking</button>
+      <button data-view="center" class="nav"><i class="ic" style="--c:#d9822b">●</i>Community Center</button>
+      <button data-view="street" class="nav"><i class="ic">⌖</i>Street View</button>
+
+      <div class="section-label">Guided tours</div>
+      <button data-tour="sustainability" class="nav tour"><i class="ic" style="--c:#2e9c8f">▶</i>Sustainability Tour</button>
+      <button data-tour="community" class="nav tour"><i class="ic" style="--c:#c25b3a">▶</i>Community Tour</button>
+
+      <div class="section-label">Layers</div>
+      <label class="toggle"><input type="checkbox" id="t-labels" checked /><span></span>Feature labels</label>
+      <label class="toggle"><input type="checkbox" id="t-diagram" /><span></span>Land-use diagram</label>
+      <label class="toggle"><input type="checkbox" id="t-boundary" checked /><span></span>31.5-acre boundary</label>
+      <label class="toggle"><input type="checkbox" id="t-rotate" /><span></span>Auto-rotate</label>
+      <label class="toggle"><input type="checkbox" id="t-quality" checked /><span></span>Shadows (high quality)</label>
+
+      <div class="section-label">Time of day <b id="sun-label"></b></div>
+      <input type="range" id="sun" min="7" max="18.5" step="0.25" value="10.5" aria-label="Time of day" />
+    </div>
+  </nav>
+
+  <aside id="info" class="panel hidden" aria-live="polite">
+    <button id="info-close" class="close" aria-label="Close">✕</button>
+    <span id="info-cat" class="chip"></span>
+    <h2 id="info-title"></h2>
+    <p id="info-text"></p>
+    <ul id="info-facts"></ul>
+    <p id="info-note" class="note hidden"></p>
+    <button id="info-fly" class="ghost">Fly to this feature</button>
+  </aside>
+
+  <div id="tour" class="panel hidden">
+    <div class="tour-head"><span id="tour-title"></span><span id="tour-step"></span></div>
+    <h3 id="tour-stop"></h3>
+    <p id="tour-text"></p>
+    <div id="tour-progress"><div id="tour-progress-bar"></div></div>
+    <div class="tour-foot">
+      <div id="tour-dots"></div>
+      <div class="tour-btns">
+        <button id="tour-prev" aria-label="Previous">◀</button>
+        <button id="tour-pause" aria-label="Pause">❚❚</button>
+        <button id="tour-next" aria-label="Next">▶</button>
+        <button id="tour-close" aria-label="End tour">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="legend" class="panel hidden">
+    <div class="section-label">Land-use diagram</div>
+    <div><i style="--c:#2fae4f"></i>Public park</div>
+    <div><i style="--c:#9be35b"></i>Shared courtyards &amp; gardens</div>
+    <div><i style="--c:#ffd23d"></i>Car-free greenways</div>
+    <div><i style="--c:#f2e6d0"></i>Homes</div>
+    <div><i style="--c:#ff9d2e"></i>Community center</div>
+    <div><i style="--c:#2d7dff"></i>Solar carports (edge)</div>
+    <div><i style="--c:#e0463c"></i>Vehicle loop (edge only)</div>
+  </div>
+
+
+  <div id="compass" title="North">
+    <svg viewBox="0 0 40 40" width="46" height="46"><circle cx="20" cy="20" r="18" fill="rgba(255,255,255,.85)" stroke="rgba(0,0,0,.12)"/>
+      <g id="compass-needle"><path d="M20 5 L25 21 L20 18 L15 21 Z" fill="#c0392b"/><path d="M20 35 L25 21 L20 24 L15 21 Z" fill="#9aa0a6"/><text x="20" y="4.8" font-size="0" /></g>
+    </svg>
+    <span>N</span>
+  </div>
+  <div id="street-banner" class="hidden"></div>
+  <div id="hint">Drag to rotate · Right-drag to pan · Scroll to zoom · Click buildings, courtyards &amp; carports</div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

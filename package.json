@@ -1,0 +1,17 @@
+{
+  "name": "north-campus-commons",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sparkathon 2026 - interactive 3D model of workforce housing on the Claremont Colleges North Campus golf course site",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node tools/check.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "23.10.4"
+  }
+}
